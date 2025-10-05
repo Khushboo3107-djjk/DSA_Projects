@@ -1,0 +1,36 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+// Task structure
+struct Task {
+    string name;
+    int priority;
+    Task(string n, int p) : name(n), priority(p) {}
+};
+
+// Comparison for min-heap (lower priority value = higher importance)
+struct Compare {
+    bool operator()(Task a, Task b) {
+        return a.priority > b.priority;
+    }
+};
+
+int main() {
+    priority_queue<Task, vector<Task>, Compare> pq;
+
+    // Sample tasks
+    pq.push(Task("Submit assignment", 2));
+    pq.push(Task("Prepare for interview", 1));
+    pq.push(Task("Read book", 3));
+
+    cout << "Tasks in order of priority:\n";
+    while (!pq.empty()) {
+        Task t = pq.top();
+        cout << "Task: " << t.name << " | Priority: " << t.priority << endl;
+        pq.pop();
+    }
+
+    return 0;
+}
