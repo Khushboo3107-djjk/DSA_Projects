@@ -1,0 +1,67 @@
+#include <iostream>
+#include <unordered_map>
+#include <vector>
+using namespace std;
+
+// Trie Node
+struct TrieNode {
+    unordered_map<char, TrieNode*> children;
+    bool isEndOfWord;
+    TrieNode() { isEndOfWord = false; }
+};
+
+// Insert a word into Trie
+void insert(TrieNode* root, string word) {
+    TrieNode* node = root;
+    for (char c : word) {
+        if (!node->children[c])
+            node->children[c] = new TrieNode();
+        node = node->children[c];
+    }
+    node->isEndOfWord = true;
+}
+
+// Recursive function to find all words with given prefix
+void autoCompleteHelper(TrieNode* node, string prefix, vector<string>& results) {
+    if (node->isEndOfWord)
+        results.push_back(prefix);
+    for (auto& child : node->children)
+        autoCompleteHelper(child.second, prefix + child.first, results);
+}
+
+// Auto-complete function
+vector<string> autoComplete(TrieNode* root, string prefix) {
+    TrieNode* node = root;
+    for (char c : prefix) {
+        if (!node->children[c])
+            return {}; // no suggestions
+        node = node->children[c];
+    }
+    vector<string> results;
+    autoCompleteHelper(node, prefix, results);
+    return results;
+}
+
+int main() {
+    TrieNode* root = new TrieNode();
+
+    // Sample dictionary
+    vector<string> words = {"apple", "app", "application", "bat", "ball", "banana"};
+    for (string w : words)
+        insert(root, w);
+
+    string prefix;
+    cout << "Enter prefix: ";
+    cin >> prefix;
+
+    vector<string> suggestions = autoComplete(root, prefix);
+    if (suggestions.empty())
+        cout << "No suggestions found.\n";
+    else {
+        cout << "Suggestions:\n";
+        for (string s : suggestions)
+            cout << s << endl;
+    }
+
+    return 0;
+}
